@@ -38,6 +38,20 @@ ipcMain.handle('save-file', (event, content) => {
     return `文件已保存到：${filePath}`;
 });
 
+// 监听文件读取请求
+ipcMain.handle('read-file', (event) => {
+    const userRoamingPath = path.join(os.homedir(), 'AppData', 'Roaming', 'recipe-saver');  // 指定保存路径
+    const filePath = path.join(userRoamingPath, 'saved.txt');  // 文件路径
+
+    // 检查文件是否存在
+    if (fs.existsSync(filePath)) {
+        const fileContent = fs.readFileSync(filePath, 'utf8');
+        return fileContent;  // 返回文件内容
+    } else {
+        throw new Error('文件不存在');
+    }
+});
+
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
